@@ -71,7 +71,7 @@ def start_webserver(net):
     sleep(1)
     return [proc]
 
-def measureweb_download(net):
+def measure_web_download(net):
     h2 = net.get('h2')
     download_times = []
     for _ in range(3):  # Executa 3 vezes
