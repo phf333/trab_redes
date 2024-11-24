@@ -106,8 +106,14 @@ def bufferbloat():
     avg_time = sum(download_times) / len(download_times)
     std_dev = math.sqrt(sum([(x - avg_time) ** 2 for x in download_times]) / len(download_times))
     print(f"Average download time: {avg_time:.3f}s, Std Dev: {std_dev:.3f}s")
-
+    
+    
+    
+    
     qmon.terminate()
+
+    CLI(net)
+
     net.stop()
     Popen("pgrep -f 'http.server' | xargs kill -9", shell=True).wait()
 
