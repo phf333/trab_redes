@@ -146,7 +146,7 @@ def bufferbloat():
     qmon = start_qmon(iface='s0-eth2', outfile=f'{args.dir}/q.txt')
 
     if args.cong == "quic":
-        start_quic_server(net)
+        #start_quic_server(net)
         start_video_streaming(net)  # QUIC streaming
     else:
         os.system(f"sysctl -w net.ipv4.tcp_congestion_control={args.cong}")
