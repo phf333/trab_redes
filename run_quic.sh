@@ -23,8 +23,8 @@ for qsize in 20 100; do
         --maxq $qsize \
         --cong quic
 
-    python3 plot_queue.py -f $dir/q.txt -o reno-buffer-q$qsize.png
-    python3 plot_ping.py -f $dir/ping.txt -o reno-rtt-q$qsize.png   
+    python3 plot_queue.py -f $dir/q.txt -o quic-buffer-q$qsize.png
+    python3 plot_ping.py -f $dir/ping.txt -o quic-rtt-q$qsize.png   
 done
 
 
