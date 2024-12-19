@@ -125,7 +125,7 @@ def start_tcp_video_streaming(net):
     h2 = net.get('h2')
 
     print("Starting video streaming server (TCP)...")
-    server_cmd = "iperf -s -p 5002"
+    server_cmd = "iperf -s -p 5001"
     h1.popen(server_cmd, shell=True)
 
     print("Starting video streaming client (TCP)...")
