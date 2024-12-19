@@ -14,24 +14,17 @@ for qsize in 20 100; do
 
     mkdir -p $dir
 
-    for cong in reno bbr quic; do
-        python3 bufferbloat.py \
-            --bw-host 1000 \
-            --bw-net $bwnet \
-            --delay $delay \
-            --dir $dir/$cong \
-            --time $time \
-            --maxq $qsize \
-            --cong $cong
+    python3 bufferbloat.py \
+        --bw-host 1000 \
+        --bw-net $bwnet \
+        --delay $delay \
+        --dir $dir/$cong \
+        --time $time \
+        --maxq $qsize \
+        --cong quic
 
-        if [ "$cong" == "quic" ]; then
-            python3 plot_queue.py -f $dir/$cong/q.txt -o quic-buffer-q$qsize.png
-            python3 plot_ping.py -f $dir/$cong/ping.txt -o quic-rtt-q$qsize.png
-        else
-            python3 plot_queue.py -f $dir/$cong/q.txt -o $cong-buffer-q$qsize.png
-            python3 plot_ping.py -f $dir/$cong/ping.txt -o $cong-rtt-q$qsize.png
-        fi
-    done
+        python3 plot_queue.py -f $dir/$cong/q.txt -o quic-buffer-q$qsize.png
+        python3 plot_ping.py -f $dir/$cong/ping.txt -o quic-rtt-q$qsize.png    
 done
 
 
