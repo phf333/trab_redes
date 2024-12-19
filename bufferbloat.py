@@ -129,7 +129,7 @@ def start_tcp_video_streaming(net):
     h1.popen(server_cmd, shell=True)
 
     print("Starting video streaming client (TCP)...")
-    client_cmd = f"iperf -c {h1.IP()} -t {args.time} -i 1 -p 5002"
+    client_cmd = f"iperf -c {h2.IP()} -t {args.time} -i 1 -p 5001"
     h2.popen(client_cmd, shell=True)
 
 def bufferbloat():
