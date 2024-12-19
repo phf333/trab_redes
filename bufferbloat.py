@@ -99,6 +99,38 @@ def start_quic_client(net):
     )
     h2.popen(client_cmd, shell=True)
 
+def start_video_streaming(net):
+    h1 = net.get('h1')
+    h2 = net.get('h2')
+
+    # Inicia o servidor de streaming no h1
+    print("Starting video streaming server (QUIC)...")
+    server_cmd = (
+        "python3 -m aioquic.quic_server "
+        "--certificate cert.pem --private-key key.pem "
+        "--host 0.0.0.0 --port 4433 --streaming-video"
+    )
+    h1.popen(server_cmd, shell=True)
+
+    # Inicia o cliente de streaming no h2
+    print("Starting video streaming client (QUIC)...")
+    client_cmd = (
+        "python3 -m aioquic.quic_client "
+        "--ca-certificate cert.pem https://10.0.0.1:4433"
+    )
+    h2.popen(client_cmd, shell=True)
+
+def start_tcp_video_streaming(net):
+    h1 = net.get('h1')
+    h2 = net.get('h2')
+
+    print("Starting video streaming server (TCP)...")
+    server_cmd = "iperf -s -p 5002"
+    h1.popen(server_cmd, shell=True)
+
+    print("Starting video streaming client (TCP)...")
+    client_cmd = f"iperf -c {h1.IP()} -t {args.time} -i 1 -p 5002"
+    h2.popen(client_cmd, shell=True)
 
 def bufferbloat():
     if not os.path.exists(args.dir):
@@ -112,15 +144,15 @@ def bufferbloat():
     net.pingAll()
 
     qmon = start_qmon(iface='s0-eth2', outfile=f'{args.dir}/q.txt')
-    
+
     if args.cong == "quic":
         start_quic_server(net)
-        start_quic_client(net)
+        start_video_streaming(net)  # QUIC streaming
     else:
-        start_iperf(net)
-    
+        os.system(f"sysctl -w net.ipv4.tcp_congestion_control={args.cong}")
+        start_tcp_video_streaming(net)  # TCP streaming
+
     start_ping(net)
-    start_webserver(net)
 
     print("Starting webpage downloads...")
     download_times = measure_web_download(net)
@@ -132,8 +164,6 @@ def bufferbloat():
     qmon.terminate()
     #CLI(net)
     net.stop()
-    Popen("pgrep -f 'http.server' | xargs kill -9", shell=True).wait()
-
 
 # def bufferbloat():
 #     if not os.path.exists(args.dir):
