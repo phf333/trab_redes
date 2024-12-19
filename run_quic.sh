@@ -18,13 +18,13 @@ for qsize in 20 100; do
         --bw-host 1000 \
         --bw-net $bwnet \
         --delay $delay \
-        --dir $dir/$cong \
+        --dir $dir \
         --time $time \
         --maxq $qsize \
         --cong quic
 
-        python3 plot_queue.py -f $dir/$cong/q.txt -o quic-buffer-q$qsize.png
-        python3 plot_ping.py -f $dir/$cong/ping.txt -o quic-rtt-q$qsize.png    
+    python3 plot_queue.py -f $dir/q.txt -o reno-buffer-q$qsize.png
+    python3 plot_ping.py -f $dir/ping.txt -o reno-rtt-q$qsize.png   
 done
 
 
