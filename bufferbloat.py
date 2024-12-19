@@ -1,8 +1,4 @@
-# Ajustando o código Python fornecido no bufferbloat.py com base nas instruções dadas.
 
-# Código atualizado para implementar as partes que faltam.
-
-# Parte principal do script ajustada para implementar a lógica necessária no experimento.
 
 from mininet.topo import Topo
 from mininet.node import CPULimitedHost
@@ -84,10 +80,30 @@ def measure_web_download(net):
         sleep(sleep_time)
     return download_times
 
+def start_quic_server(net):
+    h1 = net.get('h1')
+    print("Starting QUIC server...")
+    server_cmd = (
+        "python3 -m aioquic.quic_server "
+        "--certificate cert.pem --private-key key.pem "
+        "--host 0.0.0.0 --port 4433"
+    )
+    h1.popen(server_cmd, shell=True)
+
+def start_quic_client(net):
+    h2 = net.get('h2')
+    print("Starting QUIC client...")
+    client_cmd = (
+        "python3 -m aioquic.quic_client "
+        "--ca-certificate cert.pem https://10.0.0.1:4433"
+    )
+    h2.popen(client_cmd, shell=True)
+
+
 def bufferbloat():
     if not os.path.exists(args.dir):
         os.makedirs(args.dir)
-    os.system(f"sysctl -w net.ipv4.tcp_congestion_control={args.cong}")
+
     topo = BBTopo()
     net = Mininet(topo=topo, host=CPULimitedHost, link=TCLink)
     net.start()
@@ -96,9 +112,14 @@ def bufferbloat():
     net.pingAll()
 
     qmon = start_qmon(iface='s0-eth2', outfile=f'{args.dir}/q.txt')
-    start_iperf(net)
+    
+    if args.cong == "quic":
+        start_quic_server(net)
+        start_quic_client(net)
+    else:
+        start_iperf(net)
+    
     start_ping(net)
-    start_webserver(net)
 
     print("Starting webpage downloads...")
     download_times = measure_web_download(net)
@@ -106,16 +127,44 @@ def bufferbloat():
     avg_time = sum(download_times) / len(download_times)
     std_dev = math.sqrt(sum([(x - avg_time) ** 2 for x in download_times]) / len(download_times))
     print(f"Average download time: {avg_time:.3f}s, Std Dev: {std_dev:.3f}s")
-    
-    
-    
-    
+
     qmon.terminate()
-
     CLI(net)
-
     net.stop()
-    Popen("pgrep -f 'http.server' | xargs kill -9", shell=True).wait()
+
+
+# def bufferbloat():
+#     if not os.path.exists(args.dir):
+#         os.makedirs(args.dir)
+#     os.system(f"sysctl -w net.ipv4.tcp_congestion_control={args.cong}")
+#     topo = BBTopo()
+#     net = Mininet(topo=topo, host=CPULimitedHost, link=TCLink)
+#     net.start()
+
+#     dumpNodeConnections(net.hosts)
+#     net.pingAll()
+
+#     qmon = start_qmon(iface='s0-eth2', outfile=f'{args.dir}/q.txt')
+#     start_iperf(net)
+#     start_ping(net)
+#     start_webserver(net)
+
+#     print("Starting webpage downloads...")
+#     download_times = measure_web_download(net)
+
+#     avg_time = sum(download_times) / len(download_times)
+#     std_dev = math.sqrt(sum([(x - avg_time) ** 2 for x in download_times]) / len(download_times))
+#     print(f"Average download time: {avg_time:.3f}s, Std Dev: {std_dev:.3f}s")
+    
+    
+    
+    
+#     qmon.terminate()
+
+#     CLI(net)
+
+#     net.stop()
+#     Popen("pgrep -f 'http.server' | xargs kill -9", shell=True).wait()
 
 if __name__ == "__main__":
     bufferbloat()

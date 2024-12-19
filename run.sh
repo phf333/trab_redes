@@ -12,20 +12,47 @@ iperf_port=5001
 for qsize in 20 100; do
     dir=bb-q$qsize
 
-    # Cria o diretório de saída se ele ainda não existir.
     mkdir -p $dir
 
-    # Executa o bufferbloat.py com os parâmetros apropriados.
-    python3 bufferbloat.py \
-        --bw-host 1000 \
-        --bw-net $bwnet \
-        --delay $delay \
-        --dir $dir \
-        --time $time \
-        --maxq $qsize \
-        --cong reno
+    for cong in reno bbr quic; do
+        python3 bufferbloat.py \
+            --bw-host 1000 \
+            --bw-net $bwnet \
+            --delay $delay \
+            --dir $dir/$cong \
+            --time $time \
+            --maxq $qsize \
+            --cong $cong
 
-    # Gera os gráficos usando os dados de saída.
-    python3 plot_queue.py -f $dir/q.txt -o reno-buffer-q$qsize.png
-    python3 plot_ping.py -f $dir/ping.txt -o reno-rtt-q$qsize.png
+        if [ "$cong" == "quic" ]; then
+            python3 plot_queue.py -f $dir/$cong/q.txt -o quic-buffer-q$qsize.png
+            python3 plot_ping.py -f $dir/$cong/ping.txt -o quic-rtt-q$qsize.png
+        else
+            python3 plot_queue.py -f $dir/$cong/q.txt -o $cong-buffer-q$qsize.png
+            python3 plot_ping.py -f $dir/$cong/ping.txt -o $cong-rtt-q$qsize.png
+        fi
+    done
 done
+
+
+# for qsize in 20 100; do
+#     dir=bb-q$qsize
+
+#     # Cria o diretório de saída se ele ainda não existir.
+#     mkdir -p $dir
+
+#     # Executa o bufferbloat.py com os parâmetros apropriados.
+#     python3 bufferbloat.py \
+#         --bw-host 1000 \
+#         --bw-net $bwnet \
+#         --delay $delay \
+#         --dir $dir \
+#         --time $time \
+#         --maxq $qsize \
+#         --cong reno
+
+#     # Gera os gráficos usando os dados de saída.
+#     python3 plot_queue.py -f $dir/q.txt -o reno-buffer-q$qsize.png
+#     python3 plot_ping.py -f $dir/ping.txt -o reno-rtt-q$qsize.png
+# done
+
