@@ -9,7 +9,7 @@ delay=10
 
 iperf_port=5001
 
-ffor qsize in 20 100; do
+for qsize in 20 100; do
     dir=bb-q$qsize
 
     mkdir -p $dir
