@@ -33,6 +33,6 @@ for qsize in 20 100; do
         fi
 
         # Geração de gráficos para streaming
-        python3 plot_streaming.py -f $dir/$cong/streaming.txt -o $cong-streaming-q$qsize.png
+        #python3 plot_streaming.py -f $dir/$cong/streaming.txt -o $cong-streaming-q$qsize.png
     done
 done
