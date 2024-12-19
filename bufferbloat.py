@@ -120,6 +120,7 @@ def bufferbloat():
         start_iperf(net)
     
     start_ping(net)
+    start_webserver(net)
 
     print("Starting webpage downloads...")
     download_times = measure_web_download(net)
@@ -129,8 +130,9 @@ def bufferbloat():
     print(f"Average download time: {avg_time:.3f}s, Std Dev: {std_dev:.3f}s")
 
     qmon.terminate()
-    CLI(net)
+    #CLI(net)
     net.stop()
+    Popen("pgrep -f 'http.server' | xargs kill -9", shell=True).wait()
 
 
 # def bufferbloat():
