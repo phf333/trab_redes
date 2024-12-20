@@ -5,7 +5,7 @@
 time=20
 bwnet=1.5
 # Para obter um RTT de 20ms, cada link precisa ter um atraso de 10ms (ida e volta).
-delay=10
+delay=4
 
 iperf_port=5001
 
