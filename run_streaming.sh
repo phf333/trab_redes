@@ -2,14 +2,14 @@
 
 # Note: Mininet must be run as root. Invoke this shell script using sudo.
 
-time=90
+time=20
 bwnet=1.5
 # Para obter um RTT de 20ms, cada link precisa ter um atraso de 10ms (ida e volta).
 delay=10
 
 iperf_port=5001
 
-for qsize in 20 100 500 1000; do
+for qsize in  100; do
     dir=bb-q$qsize
 
     mkdir -p $dir
