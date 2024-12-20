@@ -132,6 +132,9 @@ def start_tcp_video_streaming(net):
     client_cmd = f"iperf -c {h2.IP()} -t {args.time} -i 1 -p 5001"
     h2.popen(client_cmd, shell=True)
 
+
+## comente a função abaixo para rodar as partes 2,3 e 4
+
 def bufferbloat():
     if not os.path.exists(args.dir):
         os.makedirs(args.dir)
@@ -164,6 +167,9 @@ def bufferbloat():
     qmon.terminate()
     #CLI(net)
     net.stop()
+
+
+#### descomentar para rodar as partes 2,3 e 4
 
 # def bufferbloat():
 #     if not os.path.exists(args.dir):
